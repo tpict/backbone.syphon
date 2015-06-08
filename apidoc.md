@@ -4,6 +4,12 @@ The document is the primary source for the API that Syphon
 exposes, and provides information on how to correctly override
 and configure the behaviors of Syphon.
 
+## Syphon.InputFetcher
+
+Determines the input elements present in the form (or view).
+The default implementation will return elements of type `input`
+as well as elements with `contenteditable="true"`.
+
 ## Syphon.KeyExtractorSet (Key Extractors)
 
 When a form is serialized, all of the input elements are 
@@ -37,7 +43,10 @@ register new extractors as needed (see below).
 ### Default Key Extractor: element "name"
 
 The default key extractor uses the `name` attribute of the form's
-input element as the key.
+input element as the key. If the `name` property is undefined, it
+will fall back to using the `data-name` property (which should
+therefore be defined in order to use Syphon with non-input elements,
+e.g. a `div` with `contenteditable="true"`).
 
 For example, an HTML form that looks like this:
 
@@ -45,6 +54,7 @@ For example, an HTML form that looks like this:
 <form>
   <input name="foo" value="bar">
   <input type="checkbox" name="chk" checked>
+  <div data-name="editor" contenteditable="true">my text</div>
 </form>
 ```
 
@@ -53,7 +63,8 @@ will produce this result, when serialized:
 ```js
 {
   foo: "bar",
-  chk: true
+  chk: true,
+  editor: "my text"
 }
 ```
 
@@ -138,6 +149,9 @@ jQuery's `val()` method. The checkbox reader, however, looks
 for whether or not the checkbox is checked and returns a
 boolean value.
 
+In addition, the input reader will handle elements that are
+`contenteditable="true"` using jQuery's `html()` method.
+
 ### Default Input Reader Set
 
 Syphon comes with a default input reader set in the
@@ -200,6 +214,9 @@ The default reader handles nearly
 every form of input using jQuery's `val()` method. The checkbox reader, 
 sets whether or not the checkbox is checked, and the radio writer will
 select the correct radio button in a radio button group.
+
+In addition, the input writer will handle elements that are
+`contenteditable="true"` using jQuery's `html()` method.
 
 ### Default Input Writer Set
 

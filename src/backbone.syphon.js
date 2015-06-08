@@ -87,7 +87,7 @@ Syphon.deserialize = function(view, data, options) {
 // Retrieve all of the form inputs
 // from the form
 var getInputElements = function(view, config) {
-  var formInputs = getForm(view);
+  var formInputs = config.inputFetcher(view);
 
   formInputs = _.reject(formInputs, function(el) {
     var reject;
@@ -143,28 +143,20 @@ var getElementType = function(el) {
   return type.toLowerCase();
 };
 
-// If a dom element is given, just return the form fields.
-// Otherwise, get the form fields from the view.
-var getForm = function(viewOrForm) {
-  if (_.isUndefined(viewOrForm.$el)) {
-    return $(viewOrForm).find(':input');
-  } else {
-    return viewOrForm.$(':input');
-  }
-};
-
 // Build a configuration object and initialize
 // default values.
 var buildConfig = function(options) {
   var config = _.clone(options) || {};
 
   config.ignoredTypes = _.clone(Syphon.ignoredTypes);
-  config.inputReaders = config.inputReaders || Syphon.InputReaders;
-  config.inputWriters = config.inputWriters || Syphon.InputWriters;
-  config.keyExtractors = config.keyExtractors || Syphon.KeyExtractors;
-  config.keySplitter = config.keySplitter || Syphon.KeySplitter;
-  config.keyJoiner = config.keyJoiner || Syphon.KeyJoiner;
-  config.keyAssignmentValidators = config.keyAssignmentValidators || Syphon.KeyAssignmentValidators;
+  // for each propery, attempt to use the value defined on 'config',
+  // fallback to default value defined on 'Syphon'
+  // (loop so jshint doesn't complain about cyclomatic complexity)
+  _.each(['inputFetcher', 'inputReaders', 'inputWriters', 'keyExtractors',
+      'keySplitter', 'keyJoiner', 'keyAssignmentValidators'], function(prop) {
+    var capitalized = prop.charAt(0).toUpperCase() + prop.slice(1);
+    config[prop] = config[prop] || Syphon[capitalized];
+  });
 
   return config;
 };

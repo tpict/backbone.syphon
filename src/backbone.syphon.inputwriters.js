@@ -11,7 +11,11 @@ var InputWriters = Syphon.InputWriters = new InputWriterSet();
 // The default input writer, which sets an input
 // element's "value"
 InputWriters.registerDefault(function($el, value) {
-  $el.val(value);
+  if (('' + $el.attr('contenteditable')).toLowerCase() !== 'true') {
+    $el.val(value);
+  } else {
+    $el.html(value);
+  }
 });
 
 // Checkbox writer, set whether or not the checkbox is checked

@@ -11,7 +11,12 @@ var InputReaders = Syphon.InputReaders = new InputReaderSet();
 // The default input reader, which uses an input
 // element's "value"
 InputReaders.registerDefault(function($el) {
-  return $el.val();
+  var editableProp = $el.attr('contenteditable');
+  if (('' + editableProp).toLowerCase() !== 'true') {
+    return $el.val();
+  } else {
+    return $el.html();
+  }
 });
 
 // Checkbox reader, returning a boolean value for
