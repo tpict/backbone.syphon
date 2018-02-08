@@ -11,11 +11,13 @@ var InputWriters = Syphon.InputWriters = new InputWriterSet();
 // The default input writer, which sets an input
 // element's "value"
 InputWriters.registerDefault(function($el, value) {
-  if (('' + $el.attr('contenteditable')).toLowerCase() !== 'true') {
-    $el.val(value);
-  } else {
-    $el.html(value);
-  }
+  $el.val(value);
+});
+
+// contenteditable writer, which changes the HTML contained by
+// the element
+InputWriters.register('contenteditable', function($el, value) {
+  $el.html(value);
 });
 
 // Checkbox writer, set whether or not the checkbox is checked
@@ -32,5 +34,6 @@ InputWriters.register('checkbox', function($el, value) {
 // checked.  The button should only be checked if it's value
 // equals the given value.
 InputWriters.register('radio', function($el, value) {
-  $el.prop('checked', $el.val() === value.toString());
+  var checked = _.isUndefined(value) ? false : $el.val() === value.toString();
+  $el.prop('checked', checked);
 });

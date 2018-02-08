@@ -87,7 +87,7 @@ Syphon.deserialize = function(view, data, options) {
 // Retrieve all of the form inputs
 // from the form
 var getInputElements = function(view, config) {
-  var formInputs = config.inputFetcher(view);
+  var formInputs = getForm(view);
 
   formInputs = _.reject(formInputs, function(el) {
     var reject;
@@ -99,8 +99,8 @@ var getInputElements = function(view, config) {
       return (ignoredTypeOrSelector === myType) || $(el).is(ignoredTypeOrSelector);
     });
 
-    var foundInInclude = _.include(config.include, identifier);
-    var foundInExclude = _.include(config.exclude, identifier);
+    var foundInInclude = _.includes(config.include, identifier);
+    var foundInExclude = _.includes(config.exclude, identifier);
 
     if (foundInInclude) {
       reject = false;
@@ -137,10 +137,24 @@ var getElementType = function(el) {
     }
   }
 
+  if ($el.attr('contenteditable')) {
+    type = 'contenteditable';
+  }
+
   // Always return the type as lowercase
   // so it can be matched to lowercase
   // type registrations.
   return type.toLowerCase();
+};
+
+// If a dom element is given, just return the form fields.
+// Otherwise, get the form fields from the view.
+var getForm = function(viewOrForm) {
+  if (_.isUndefined(viewOrForm.$el)) {
+    return $(viewOrForm).find(':input');
+  } else {
+    return viewOrForm.$(':input, [contenteditable]');
+  }
 };
 
 // Build a configuration object and initialize
@@ -149,14 +163,12 @@ var buildConfig = function(options) {
   var config = _.clone(options) || {};
 
   config.ignoredTypes = _.clone(Syphon.ignoredTypes);
-  // for each propery, attempt to use the value defined on 'config',
-  // fallback to default value defined on 'Syphon'
-  // (loop so jshint doesn't complain about cyclomatic complexity)
-  _.each(['inputFetcher', 'inputReaders', 'inputWriters', 'keyExtractors',
-      'keySplitter', 'keyJoiner', 'keyAssignmentValidators'], function(prop) {
-    var capitalized = prop.charAt(0).toUpperCase() + prop.slice(1);
-    config[prop] = config[prop] || Syphon[capitalized];
-  });
+  config.inputReaders = config.inputReaders || Syphon.InputReaders;
+  config.inputWriters = config.inputWriters || Syphon.InputWriters;
+  config.keyExtractors = config.keyExtractors || Syphon.KeyExtractors;
+  config.keySplitter = config.keySplitter || Syphon.KeySplitter;
+  config.keyJoiner = config.keyJoiner || Syphon.KeyJoiner;
+  config.keyAssignmentValidators = config.keyAssignmentValidators || Syphon.KeyAssignmentValidators;
 
   return config;
 };

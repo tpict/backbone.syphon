@@ -33,7 +33,7 @@ MyExtractorSet.registerDefault(function($el){
   return $el.prop("id");
 });
 
-Backbone.KeyExtractors = MyExtractorSet;
+Backbone.Syphon.KeyExtractors = MyExtractorSet;
 ```
 
 Under normal circumstances, you won't have to replace
@@ -167,7 +167,7 @@ MyReaderSet.registerDefault(function($el){
   return $el.val();
 });
 
-Backbone.InputReaders = MyReaderSet;
+Backbone.Syphon.InputReaders = MyReaderSet;
 ```
 
 Under normal circumstances, you won't have to create your
@@ -233,7 +233,7 @@ MyWriterSet.registerDefault(function($el, value){
   $el.val(value);
 });
 
-Backbone.InputWriters = MyWriterSet;
+Backbone.Syphon.InputWriters = MyWriterSet;
 ```
 
 Under normal circumstances, you won't have to create your
