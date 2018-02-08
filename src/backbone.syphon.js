@@ -137,7 +137,7 @@ var getElementType = function(el) {
     }
   }
 
-  if ($el.attr('contenteditable')) {
+  if (('' + $el.attr('contenteditable')).toLowerCase() === 'true') {
     type = 'contenteditable';
   }
 
