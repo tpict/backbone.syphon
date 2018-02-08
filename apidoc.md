@@ -4,12 +4,6 @@ The document is the primary source for the API that Syphon
 exposes, and provides information on how to correctly override
 and configure the behaviors of Syphon.
 
-## Syphon.InputFetcher
-
-Determines the input elements present in the form (or view).
-The default implementation will return elements of type `input`
-as well as elements with `contenteditable="true"`.
-
 ## Syphon.KeyExtractorSet (Key Extractors)
 
 When a form is serialized, all of the input elements are 
@@ -149,9 +143,6 @@ jQuery's `val()` method. The checkbox reader, however, looks
 for whether or not the checkbox is checked and returns a
 boolean value.
 
-In addition, the input reader will handle elements that are
-`contenteditable="true"` using jQuery's `html()` method.
-
 ### Default Input Reader Set
 
 Syphon comes with a default input reader set in the
@@ -214,9 +205,6 @@ The default reader handles nearly
 every form of input using jQuery's `val()` method. The checkbox reader, 
 sets whether or not the checkbox is checked, and the radio writer will
 select the correct radio button in a radio button group.
-
-In addition, the input writer will handle elements that are
-`contenteditable="true"` using jQuery's `html()` method.
 
 ### Default Input Writer Set
 
